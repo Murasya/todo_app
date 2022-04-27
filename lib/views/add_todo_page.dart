@@ -19,34 +19,43 @@ class AddTodoPage extends ConsumerWidget {
       appBar: AppBar(
         title: const Text("Todo追加"),
       ),
-      body: Column(
-        children: [
-          TextField(
-            onChanged: (_text) {
-              _title = _text;
-            },
-          ),
-          TextField(
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChanged: (_text) {
-              _daysPerTask = int.parse(_text);
-            },
-          ),
-          ElevatedButton(
-            onPressed: () {
-              todosNotifier.addTodo(Todo(
-                id: const Uuid().v4(),
-                title: _title,
-                status: false,
-                daysPerTask: _daysPerTask,
-                deadline: DateTime.now().add(Duration(days: _daysPerTask)),
-              ));
-              Navigator.pop(context);
-            },
-            child: const Text("追加"),
-          ),
-        ],
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                labelText: 'タイトル',
+              ),
+              onChanged: (_text) {
+                _title = _text;
+              },
+            ),
+            TextField(
+              decoration: const InputDecoration(
+                labelText: "何日に一回行うか(数字で入力)",
+              ),
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              onChanged: (_text) {
+                _daysPerTask = int.parse(_text);
+              },
+            ),
+            ElevatedButton(
+              onPressed: () {
+                todosNotifier.addTodo(Todo(
+                  id: const Uuid().v4(),
+                  title: _title,
+                  status: false,
+                  daysPerTask: _daysPerTask,
+                  deadline: DateTime.now().add(Duration(days: _daysPerTask)),
+                ));
+                Navigator.pop(context);
+              },
+              child: const Text("追加"),
+            ),
+          ],
+        ),
       ),
     );
   }
