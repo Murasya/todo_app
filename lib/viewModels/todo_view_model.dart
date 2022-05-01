@@ -15,18 +15,19 @@ class TodosNotifier extends StateNotifier<List<Todo>> {
 
   late final TodoDatabase _todoDatabase;
 
+  // 全タスク取得
   void getTodos() async {
     final todos = await _todoDatabase.getTodos();
     state = todos;
   }
 
-  // Todo の追加
+  // タスクの追加
   void addTodo(Todo todo) async {
     await _todoDatabase.insert(todo);
     state = [...state, todo];
   }
 
-  // Todo の削除
+  // タスクの削除
   void removeTodo(String todoId) async {
     await _todoDatabase.delete(todoId);
     state = [
@@ -35,7 +36,7 @@ class TodosNotifier extends StateNotifier<List<Todo>> {
     ];
   }
 
-  // Todo の完了ステータスの変更
+  // タスクの完了ステータスの変更
   void changeStatus(Todo oldTodo, bool value) async {
     final newTodo = oldTodo.copyWith(status: value);
     await _todoDatabase.update(newTodo);
@@ -43,5 +44,18 @@ class TodosNotifier extends StateNotifier<List<Todo>> {
       for (final todo in state)
         if (todo.id == newTodo.id) newTodo else todo,
     ];
+  }
+
+  // 日付超えてチェックついてたら外す
+  void unsetStatus(List<Todo> todos) {
+    DateTime now = DateTime.now();
+    for (var todo in todos) {
+      if (todo.deadline.isBefore(now)) {
+        final newDeadline = now.add(Duration(days: todo.daysPerTask));
+        final newTodo = todo.copyWith(deadline: newDeadline);
+        changeStatus(newTodo, false);
+      }
+    }
+    print("unset Status");
   }
 }

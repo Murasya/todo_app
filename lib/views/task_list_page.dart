@@ -11,6 +11,7 @@ class TaskListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     List<Todo> todos = ref.watch(todosProvider);
     final todosNotifier = ref.watch(todosProvider.notifier);
+    todosNotifier.unsetStatus(todos);
 
     return Scaffold(
       appBar: AppBar(
