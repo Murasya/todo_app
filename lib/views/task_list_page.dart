@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../models/todo.dart';
 import '../viewModels/todo_view_model.dart';
@@ -22,17 +23,33 @@ class TaskListPage extends ConsumerWidget {
           itemCount: todos.length,
           itemBuilder: (BuildContext context, int index) {
             Todo todo = todos[index];
-            return CheckboxListTile(
-              title: Text(todo.title),
-              subtitle: Text(todo.daysPerTask.toString() + "日に1回 " + todo.deadline.toString()),
-              value: todo.status,
-              onChanged: (bool? isCheck) {
-                todosNotifier.changeStatus(todo, isCheck!);
-              },
+            return Slidable(
+              endActionPane: ActionPane(
+                motion: const DrawerMotion(),
+                children: [
+                  SlidableAction(
+                    onPressed: (value) => todosNotifier.removeTodo(todo.id),
+                    backgroundColor: Colors.red,
+                    icon: Icons.delete,
+                    label: '削除',
+                  ),
+                ],
+              ),
+              child: CheckboxListTile(
+                title: Text(todo.title),
+                subtitle: Text(todo.daysPerTask.toString() +
+                    "日に1回 " +
+                    todo.deadline.toString()),
+                value: todo.status,
+                onChanged: (bool? isCheck) {
+                  todosNotifier.changeStatus(todo, isCheck!);
+                },
+              ),
             );
           },
         ),
       ),
+
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/addTodo');
